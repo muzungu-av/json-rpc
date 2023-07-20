@@ -13,6 +13,10 @@ app.post("/json-rpc", (req, res, next) => {
     const jsonRPCRequest = req.body;
     var summ;
     summ = jsonRPCRequest.params[0] + jsonRPCRequest.params[1];
+    if (isNaN(summ)) {
+        var err = new Error("Проблемма с параметрами");
+        next(err);
+    } else {
         server.receive(jsonRPCRequest).then((jsonRPCResponse) => {
             if (jsonRPCResponse) {
                 jsonRPCResponse.result = summ;
@@ -21,7 +25,12 @@ app.post("/json-rpc", (req, res, next) => {
                 res.sendStatus(204);
             }
         });
-
+    }
 });
+
+app.use((error, req, res, next) => {
+    res.status(400)
+    res.json({ message: error.message })
+})
 
 app.listen(8080);
