@@ -15,16 +15,11 @@ allOperation.map((operation) => {
  * Promise выполняет выбранное (сгенерированное) математическое выражение.
  * Принимает два аргумента и функцию с выражением, которое будет выполненно.
  */
-var calculate = (fn, args) => {
+var calculate = (fn, arg_0, arg_1) => {
     return new Promise((resolve, reject) => {
-        var summ = fn(args.params[0], args.params[1]);
-        if (!isNaN(summ)) resolve(summ)
-        else {
-            reject(new Error("Не удалось получить два числовых параметра"));
-        }
+        resolve(fn(arg_0, arg_1));
     })
 }
-
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -32,9 +27,13 @@ app.use(bodyParser.json());
 
 app.post("/json-rpc", (req, res, next) => {
     var mathOperation = selectOperation(req.body.method);
-
     const jsonRPCRequest = req.body;
-    calculate(mathOperation, jsonRPCRequest)
+    let arg_0 = jsonRPCRequest.params[0];
+    let arg_1 = jsonRPCRequest.params[1];
+    if (!Number.isFinite(arg_0) || !Number.isFinite(arg_1)) {
+        throw new Error('Не удалось получить два числовых параметра.')
+    }
+    calculate(mathOperation, arg_0, arg_1)
         .then((summ) => {
             server.receive(jsonRPCRequest).then((jsonRPCResponse) => {
                 if (jsonRPCResponse) {
