@@ -1,5 +1,10 @@
 {
-  "dependencies": {
-    "express-async-handler": "^1.2.0"
-  }
+  "name": "json-rpc",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node ./json-rpc-server/server.js"
+  },
+  "author": "",
+  "license": "ISC"
 }
